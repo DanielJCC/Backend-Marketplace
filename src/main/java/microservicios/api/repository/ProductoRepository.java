@@ -10,8 +10,8 @@ import microservicios.api.entities.Product;
 
 public interface ProductoRepository extends JpaRepository<Product,UUID>{
     List<Product> findByNombre(String nombre);
-    List<Product> findByPrecio(Float precio);
+    List<Product> findByPrice(Float price);
     @Query("select p from Product p where p.stock > 0")
     List<Product> findByInStock();
-    List<Product> findByPrecioLessThanAndStockLessThan(Float precio, Integer stock);
+    List<Product> findByPriceLessThanAndStockLessThan(Float price, Integer stock);
 }

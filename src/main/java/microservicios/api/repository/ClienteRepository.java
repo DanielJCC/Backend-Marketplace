@@ -9,6 +9,6 @@ import microservicios.api.entities.Cliente;
 
 public interface ClienteRepository extends JpaRepository<Cliente,UUID>{
     List<Cliente> findByEmail(String email);
-    List<Cliente> findByDireccionLike(String direccion);
+    List<Cliente> findByDireccion(String direccion);
     List<Cliente> findByNombreStartingWith(String prefix);
 }
