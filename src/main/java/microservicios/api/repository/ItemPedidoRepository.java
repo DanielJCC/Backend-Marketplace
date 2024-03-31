@@ -11,6 +11,6 @@ import microservicios.api.entities.ItemPedido;
 public interface ItemPedidoRepository extends JpaRepository<ItemPedido,UUID>{
     List<ItemPedido> findByPedidoId(UUID idPedido);
     List<ItemPedido> findByProductoId(UUID idProducto);
-    @Query("select ip.producto.nombre,sum(ip.cantidad) from ItemPedido ip where ip.producto.id = ?1 group by ip.producto")
-    ItemPedido findTotalVentasByProducto(UUID idProducto);
+    @Query("select sum(ip.cantidad*ip.precioUnitario) from ItemPedido ip where ip.producto.id = ?1 group by ip.producto")
+    Float findTotalVentasByProducto(UUID idProducto);
 }

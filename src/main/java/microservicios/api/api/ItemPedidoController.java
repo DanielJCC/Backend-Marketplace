@@ -41,9 +41,9 @@ public class ItemPedidoController {
         return ResponseEntity.ok().body(itemsPedidosFinded);
     }
     @GetMapping("/total-sales/{productId}")
-    public ResponseEntity<ItemPedidoDTO> getTotalVentasByProductId(@PathVariable("productId")UUID productId){
-        ItemPedidoDTO itemPedidoFinded = itemPedidoService.buscarItemPedidoAndTotalVentasByProductoId(productId);
-        return ResponseEntity.ok().body(itemPedidoFinded);
+    public ResponseEntity<Float> getTotalVentasByProductId(@PathVariable("productId")UUID productId){
+        Float totalVentasFinded = itemPedidoService.buscarTotalVentasByProductoId(productId);
+        return ResponseEntity.ok().body(totalVentasFinded);
     }
     @PostMapping()
     public ResponseEntity<ItemPedidoDTO> createItemPedido(@RequestBody ItemPedidoToSaveDTO itemPedidoToSave){

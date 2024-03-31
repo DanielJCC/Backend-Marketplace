@@ -81,13 +81,12 @@ public class ItemPedidoServiceImpl implements ItemPedidoService{
 
     @Override
     public List<ItemPedidoDTO> buscarItemPedidosByProductoId(UUID idProducto) {
-        List<ItemPedido> itemsPedidosFinded = itemPedidoRepository.findByPedidoId(idProducto);
+        List<ItemPedido> itemsPedidosFinded = itemPedidoRepository.findByProductoId(idProducto);
         return itemsPedidosFinded.stream().map(itemPedidoMapper::EntityToDto).toList();
     }
 
     @Override
-    public ItemPedidoDTO buscarItemPedidoAndTotalVentasByProductoId(UUID idProducto) {
-        ItemPedido itemPedidoFinded = itemPedidoRepository.findTotalVentasByProducto(idProducto);
-        return itemPedidoMapper.EntityToDto(itemPedidoFinded);
+    public Float buscarTotalVentasByProductoId(UUID idProducto) {
+        return itemPedidoRepository.findTotalVentasByProducto(idProducto);
     }
 }

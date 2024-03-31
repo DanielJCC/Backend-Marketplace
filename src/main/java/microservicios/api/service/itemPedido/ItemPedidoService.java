@@ -14,5 +14,5 @@ public interface ItemPedidoService {
     void removerItemPedido(UUID id);
     List<ItemPedidoDTO> buscarItemPedidosByPedidoId(UUID idPedido);
     List<ItemPedidoDTO> buscarItemPedidosByProductoId(UUID idProducto);
-    ItemPedidoDTO buscarItemPedidoAndTotalVentasByProductoId(UUID idProducto);
+    Float buscarTotalVentasByProductoId(UUID idProducto);
 }

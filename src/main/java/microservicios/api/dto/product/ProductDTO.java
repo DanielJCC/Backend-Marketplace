@@ -10,10 +10,6 @@ public record ProductDTO(
     UUID id,
     String nombre,
     Float price,
-    Integer stock,
-    List<ItemPedidoDTO> itemsPedidos
+    Integer stock
 ) {
-    public List<ItemPedidoDTO> itemPedidos(){
-        return Collections.unmodifiableList(itemsPedidos);
-    }
 }
