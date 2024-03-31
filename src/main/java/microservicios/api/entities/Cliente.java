@@ -3,12 +3,7 @@ package microservicios.api.entities;
 import java.util.List;
 import java.util.UUID;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,6 +24,6 @@ public class Cliente {
     private String nombre;
     private String email;
     private String direccion;
-    @OneToMany(mappedBy = "cliente")
+    @OneToMany(mappedBy = "cliente",cascade = CascadeType.ALL)
     private List<Pedido> pedidos;
 }

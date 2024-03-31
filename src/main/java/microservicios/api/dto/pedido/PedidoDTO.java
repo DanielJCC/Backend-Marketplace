@@ -14,12 +14,6 @@ public record PedidoDTO(
     UUID id,
     ClienteDTO cliente,
     LocalDateTime fechaPedido,
-    String status,
-    List<ItemPedidoDTO> itemsPedidos,
-    PagoDTO pago,
-    DetalleEnvioDTO detalleEnvio
+    String status
 ) {
-    public List<ItemPedidoDTO> itemsPedidos(){
-        return Collections.unmodifiableList(itemsPedidos);
-    }
 }

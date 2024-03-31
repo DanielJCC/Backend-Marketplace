@@ -10,10 +10,6 @@ public record ClienteDTO(
     UUID id,
     String nombre,
     String email,
-    String direccion,
-    List<PedidoDTO> pedidos
+    String direccion
 ) {
-    public List<PedidoDTO> pedidos(){
-        return Collections.unmodifiableList(pedidos);
-    }
 }

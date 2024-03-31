@@ -107,7 +107,7 @@ public class ClienteRepositoryTest extends AbstractIntegrationDBTest{
             .direccion("Cra 66b #53-06")
             .build());
 
-        assertThat(clienteRepository.findByEmail("danijocogollo@gmail.com").get(0)).isEqualTo(cliente);
+        assertThat(clienteRepository.findByEmail("danijocogollo@gmail.com")).isEqualTo(cliente);
     }
 
     @Test
@@ -119,7 +119,7 @@ public class ClienteRepositoryTest extends AbstractIntegrationDBTest{
             .direccion("Cra 66b #53-06")
             .build());
 
-        assertThat(clienteRepository.findByDireccion("Cra 66b #53-06").get(0)).isEqualTo(cliente);
+        assertThat(clienteRepository.findByDireccion("Cra 66b #53-06")).isEqualTo(cliente);
     }
 
     @Test

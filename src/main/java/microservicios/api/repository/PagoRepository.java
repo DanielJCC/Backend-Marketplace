@@ -10,5 +10,5 @@ import microservicios.api.entities.Pago;
 
 public interface PagoRepository extends JpaRepository<Pago,UUID>{
     List<Pago> findByFechaPagoBetween(LocalDate startDate, LocalDate endDate);
-    List<Pago> findByPedidoIdAndMetodoPago(UUID idPedido, String metodoPago);
+    Pago findByPedidoIdAndMetodoPago(UUID idPedido, String metodoPago);
 }

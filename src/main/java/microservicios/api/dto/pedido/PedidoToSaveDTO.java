@@ -11,10 +11,7 @@ import microservicios.api.dto.pago.PagoDTO;
 public record PedidoToSaveDTO(
     ClienteDTO cliente,
     LocalDateTime fechaPedido,
-    String status,
-    List<ItemPedidoDTO> itemsPedidos,
-    PagoDTO pago,
-    DetalleEnvioDTO detalleEnvio
+    String status
 ) {
     
 }

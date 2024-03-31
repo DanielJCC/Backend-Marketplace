@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import microservicios.api.entities.Cliente;
 
 public interface ClienteRepository extends JpaRepository<Cliente,UUID>{
-    List<Cliente> findByEmail(String email);
-    List<Cliente> findByDireccion(String direccion);
+    Cliente findByEmail(String email);
+    Cliente findByDireccion(String direccion);
     List<Cliente> findByNombreStartingWith(String prefix);
 }
