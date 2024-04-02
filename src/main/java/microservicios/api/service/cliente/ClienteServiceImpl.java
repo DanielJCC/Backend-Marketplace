@@ -1,9 +1,12 @@
 package microservicios.api.service.cliente;
 
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 import microservicios.api.dto.exception.ClienteNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import microservicios.api.dto.cliente.ClienteDTO;
@@ -17,6 +20,7 @@ public class ClienteServiceImpl implements ClienteService{
     private final ClienteMapper clienteMapper;
     private final ClienteRepository clienteRepository;
 
+    @Autowired
     public ClienteServiceImpl(ClienteMapper clienteMapper, ClienteRepository clienteRepository){
         this.clienteMapper = clienteMapper;
         this.clienteRepository = clienteRepository;
@@ -24,7 +28,9 @@ public class ClienteServiceImpl implements ClienteService{
 
     @Override
     public ClienteDTO guardarCliente(ClienteToSaveDTO cliente) {
+        Method[] metodos = clienteMapper.getClass().getMethods();
         Cliente client1 = clienteMapper.ToSaveDtoToCliente(cliente);
+        System.out.println("Cliente: "+client1.toString());
         Cliente clienteSaved = clienteRepository.save(client1);
         System.out.println(clienteSaved);
         return clienteMapper.ClienteToClienteDto(clienteSaved);
@@ -82,7 +88,7 @@ public class ClienteServiceImpl implements ClienteService{
 
     @Override
     public List<ClienteDTO> buscarClientesByPrefijoDeNombre(String prefijo) {
-        List<Cliente> clientes = clienteRepository.findByNombreStartingWith("Juan");
+        List<Cliente> clientes = clienteRepository.findByNombreStartingWith(prefijo);
         return clientes.stream().map(clienteMapper::ClienteToClienteDto).toList();
     }
 }

@@ -6,7 +6,9 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 import microservicios.api.entities.Cliente;
+import org.springframework.stereotype.Component;
 
+@Component
 @Mapper(componentModel = "spring")
 public interface ClienteMapper {
 //    ProductMapper INSTANCE = Mappers.getMapper(ProductMapper.class);
