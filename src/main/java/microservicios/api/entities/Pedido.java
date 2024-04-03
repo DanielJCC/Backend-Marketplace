@@ -4,17 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -38,10 +28,10 @@ public class Pedido {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime fechaPedido;
     private String status;
-    @OneToMany(mappedBy = "pedido")
+    @OneToMany(mappedBy = "pedido",cascade = CascadeType.ALL)
     private List<ItemPedido> itemsPedidos;
-    @OneToOne(mappedBy = "pedido")
+    @OneToOne(mappedBy = "pedido",cascade = CascadeType.ALL)
     private Pago pago;
-    @OneToOne(mappedBy = "pedido")
+    @OneToOne(mappedBy = "pedido",cascade = CascadeType.ALL)
     private DetalleEnvio detalleEnvio;
 }

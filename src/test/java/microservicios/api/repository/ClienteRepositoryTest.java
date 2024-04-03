@@ -11,139 +11,123 @@ import microservicios.api.entities.Cliente;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ClienteRepositoryTest extends AbstractIntegrationDBTest{
-    private ClienteRepository clienteRepository;
-    
+    ClienteRepository clienteRepository;
+
     @Autowired
     public ClienteRepositoryTest(ClienteRepository clienteRepository){
         this.clienteRepository = clienteRepository;
     }
 
-    // private void initMockClientes(){
-    //     Cliente cliente = Cliente.builder()
-    //             .nombre("Daniel Cogollos")
-    //             .email("danijocogollo@gmail.com")
-    //             .direccion("Cra 66b #53-06")
-    //             .build();
-    //     clienteRepository.save(cliente);
-    // }
+    private Cliente clienteglobalJuan;
+    private Cliente clienteglobalGian;
+    private Cliente clienteglobalDaniel;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         clienteRepository.deleteAll();
-        // initMockClientes();
-    }
-
-    @Test
-    @DisplayName("[CREATE] Dado un nuevo cliente, cuando se guarda, debe persistirse en la base de datos")
-    void givenAnCliente_whenSave_thenClienteWithId(){
-        Cliente cliente = Cliente.builder()
-                .nombre("Daniel Cogollos")
-                .email("danijocogollo@gmail.com")
-                .direccion("Cra 66b #53-06")
+        clienteglobalJuan = Cliente.builder()
+                .nombre("Juan Luis Diaz Guerrero")
+                .direccion("Rio frio zona bananera calle 2 carrera 404")
+                .email("juandiazlg@unimagdalena.edu.co")
                 .build();
-        Cliente clienteSaved = clienteRepository.save(cliente);
-        assertThat(clienteSaved.getId()).isNotNull();
+        clienteglobalGian = Cliente.builder()
+                .nombre("Gian Marcos Astori Payares")
+                .direccion("Santa Marta via buena vista #44-24")
+                .email("gianmarcomp@unimagdalena.edu.co")
+                .build();
+        clienteglobalDaniel = Cliente.builder()
+                .nombre("Daniel Jose Cogollos Ceron")
+                .direccion("Santa marta Calle 2 carrera 34")
+                .email("danielcogollosjc@unimagdalena.edu.co")
+                .build();
+        clienteRepository.save(clienteglobalJuan);
+        clienteRepository.save(clienteglobalGian);
+        clienteRepository.save(clienteglobalDaniel);
+
     }
 
     @Test
-    @DisplayName("[READ] Dado dos clientes existentes, cuando se buscan todos los clientes, debe retornar una lista con los dos clientes")
-    void givenTwoClientes_whenFindAll_thenListUsers(){
-        Cliente cliente = clienteRepository.save(Cliente.builder()
-            .nombre("Daniel Cogollos")
-            .email("danijocogollo@gmail.com")
-            .direccion("Cra 66b #53-06")
-            .build());
-        Cliente cliente2 = clienteRepository.save(Cliente.builder()
-            .nombre("Juan Astori")
-            .email("juan_Astori@gmail.com")
-            .direccion("Cra 50 #20-32")
-            .build());
-        List<Cliente> clientesEncontrados = clienteRepository.findAll();
-        assertThat(clientesEncontrados).isNotEmpty();
-        assertThat(clientesEncontrados).hasSize(2);
-        assertThat(clientesEncontrados.get(0).getId()).isEqualTo(cliente.getId());
-        assertThat(clientesEncontrados.get(1).getId()).isEqualTo(cliente2.getId());
+    @DisplayName("[findByEmail] Dado un correo se debe buscar el cliente asociado a dicho correo")
+    void test_findByEmail() {
+        Cliente clienteBuscadoPorEmail = clienteRepository.findByEmail("juandiazlg@unimagdalena.edu.co");
+        assertThat(clienteBuscadoPorEmail).isNotNull();
+
+        UUID id_clienteBuscado = clienteBuscadoPorEmail.getId();
+        assertThat(id_clienteBuscado).isEqualTo(clienteglobalJuan.getId());
     }
 
     @Test
-    @DisplayName("[UPDATE] Dado un usuario existente, cuando se actualiza la información, debe reflejarse en la base de datos")
-    void givenAnCliente_whenUpdate_thenClienteIsUpdated(){
-        Cliente cliente = clienteRepository.save(Cliente.builder()
-            .nombre("Daniel Cogollos")
-            .email("danijocogollo@gmail.com")
-            .direccion("Cra 66b #53-06")
-            .build());
-        cliente.setNombre("Daniel José Cogollos Cerón");
-        cliente.setEmail("danielcogollosjc@unimagdalena.edu.co");
-        Cliente clienteUpdated = clienteRepository.save(cliente);
-        assertThat(clienteRepository.findAll()).hasSize(1);
-        assertThat(clienteUpdated.getNombre()).isEqualTo("Daniel José Cogollos Cerón");
-        assertThat(clienteUpdated.getEmail()).isEqualTo("danielcogollosjc@unimagdalena.edu.co");
+    @DisplayName("[findByDireccionContainingIgnoreCase] Dado una direccion, se debe buscar todos los clientes que hagan match con dicha direccion")
+    void test_findByDireccionContainingIgnoreCase(){
+        Cliente clienteMatchDireccion = clienteRepository.findByDireccion("Santa marta Calle 2 carrera 34");
+        assertThat(clienteMatchDireccion).isNotNull();
+
+        UUID id_clienteDaniel = clienteMatchDireccion.getId();
+
+        assertThat(id_clienteDaniel).isEqualTo(clienteglobalDaniel.getId());
     }
 
     @Test
-    @DisplayName("[DELETE] Dado un cliente existente, cuando se elimina, debe reflejarse en la base de datos")
-    void givenAnCliente_whenDelete_thenClientIsDeleted(){
-        Cliente cliente = clienteRepository.save(Cliente.builder()
-            .nombre("Daniel Cogollos")
-            .email("danijocogollo@gmail.com")
-            .direccion("Cra 66b #53-06")
-            .build());
-        assertThat(clienteRepository.findAll()).hasSize(1);
-        clienteRepository.delete(cliente);
-        assertThat(clienteRepository.findAll()).hasSize(0);
+    @DisplayName("[test_findByNombreStartingWithIgnoreCase] dado un nombre se debe buscar todos los clientes que inicie por dicho nombre")
+    void test_findByNombreStartingWithIgnoreCase(){
+        List<Cliente> clienteMatchNombre = clienteRepository.findByNombreStartingWith("Gian");
+        assertThat(clienteMatchNombre.size()).isEqualTo(1);
+
+        UUID id_clienteGian = clienteMatchNombre.get(0).getId();
+        assertThat(id_clienteGian).isEqualTo(clienteglobalGian.getId());
     }
 
     @Test
-    @DisplayName("Encontrar clientes por email")
-    void givenAnCliente_whenFindByEmail_thenFindedCliente(){
-        Cliente cliente = clienteRepository.save(Cliente.builder()
-            .nombre("Daniel Cogollos")
-            .email("danijocogollo@gmail.com")
-            .direccion("Cra 66b #53-06")
-            .build());
+    @DisplayName("[save] Dado un nuevo usuario, cuando se guarda, debe persistirse en la base de datos")
+    void testSave() {
+        Cliente clienteHassam = Cliente.builder()
+                .nombre("Hassam Barranco")
+                .email("hassambarranco@unimagdalena.edu.co")
+                .direccion("Santa marta curinca calle 23i carrera 34j")
+                .build();
 
-        assertThat(clienteRepository.findByEmail("danijocogollo@gmail.com")).isEqualTo(cliente);
+        Cliente guardado = clienteRepository.save(clienteHassam);
+
+        assertThat(guardado).isNotNull();
+        assertThat(guardado.getId()).isNotNull();
     }
 
     @Test
-    @DisplayName("Encontrar clientes por dirección")
-    void givenAnCliente_whenFindByDireccion_thenFindedCliente(){
-        Cliente cliente = clienteRepository.save(Cliente.builder()
-            .nombre("Daniel Cogollos")
-            .email("danijocogollo@gmail.com")
-            .direccion("Cra 66b #53-06")
-            .build());
+    @DisplayName("[update] Dado un cliente existente, cuando se actualiza, se debe guardar los cambios en la base de datos")
+    void testUpdate() {
+        UUID idClienteGlobal = clienteglobalJuan.getId();
+        Optional<Cliente> clienteEncontrado = clienteRepository.findById(idClienteGlobal);
 
-        assertThat(clienteRepository.findByDireccion("Cra 66b #53-06")).isEqualTo(cliente);
+        assertThat(clienteEncontrado).isPresent();
+
+        Cliente clienteActualizado = clienteEncontrado.get();
+        clienteActualizado.setNombre("Luis Diaz");
+
+        Cliente clienteGuardado = clienteRepository.save(clienteActualizado);
+        assertThat(clienteGuardado.getNombre()).isEqualTo("Luis Diaz");
     }
 
     @Test
-    @DisplayName("Encontrar clientes por todos los clientes que comiencen por un numbre")
-    void givenThreeClientes_whenFindByNombreStartingWith_thenFindedClientes(){
-        Cliente cliente = clienteRepository.save(Cliente.builder()
-            .nombre("Daniel Cogollos")
-            .email("danijocogollo@gmail.com")
-            .direccion("Cra 66b #53-06")
-            .build());
-        Cliente cliente2 = clienteRepository.save(Cliente.builder()
-            .nombre("Juan Astori")
-            .email("juan_Astori@gmail.com")
-            .direccion("Cra 50 #20-32")
-            .build());
-        Cliente cliente3 = clienteRepository.save(Cliente.builder()
-            .nombre("David Gutierrez")
-            .email("davidGuti@yahoo.com")
-            .direccion("Cra 4 #22-83")
-            .build());
+    @DisplayName("[delete] Dado un cliente existente, cuando se elimina, se debe eliminar de la base de datos")
+    void testDelete() {
+        UUID idClienteGlobalDaniel = clienteglobalDaniel.getId();
+        clienteRepository.deleteById(idClienteGlobalDaniel);
 
-        List<Cliente> clientesFinded = clienteRepository.findByNombreStartingWith("Da");
-        assertThat(clientesFinded).hasSize(2);
-        assertThat(clientesFinded.get(0)).isEqualTo(cliente);
-        assertThat(clientesFinded.get(1)).isEqualTo(cliente3);
+        Optional<Cliente> clienteEncontrado = clienteRepository.findById(idClienteGlobalDaniel);
+        assertThat(clienteEncontrado).isEmpty();
     }
+
+    @Test
+    @DisplayName("[read] se debe poder recuperar los clientes de la base de datos")
+    void testRead(){
+        List<Cliente> listaTodoCliente= clienteRepository.findAll();
+        assertThat(listaTodoCliente.size()).isEqualTo(3);
+    }
+
 }
