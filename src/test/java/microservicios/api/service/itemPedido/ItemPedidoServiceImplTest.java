@@ -22,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -45,8 +46,8 @@ class ItemPedidoServiceImplTest {
     private ItemPedidoServiceImpl itemPedidoService;
     Cliente cliente;
     ClienteDTO clienteDTO;
-    Pedido pedido,pedido2;
-    PedidoDTO pedidoDTO,pedidoDTO2;
+    Pedido pedido;
+    PedidoDTO pedidoDTO;
     Product product, product2;
     ProductDTO productDTO, productDTO2;
     ItemPedido itemPedido,itemPedido2;
@@ -74,17 +75,6 @@ class ItemPedidoServiceImplTest {
                 clienteDTO,
                 pedido.getFechaPedido(),
                 pedido.getStatus());
-        pedido2 = Pedido.builder()
-                .id(UUID.randomUUID())
-                .cliente(cliente)
-                .fechaPedido(LocalDateTime.now())
-                .status("PENDIENTE")
-                .build();
-        pedidoDTO2 = new PedidoDTO(
-                pedido2.getId(),
-                clienteDTO,
-                pedido2.getFechaPedido(),
-                pedido2.getStatus());
         product = Product.builder()
                 .id(UUID.randomUUID())
                 .nombre("Product test")
@@ -186,12 +176,82 @@ class ItemPedidoServiceImplTest {
         assertThat(itemPedidoFinded).isNotNull();
         assertThat(itemPedidoFinded.id()).isEqualTo(itemPedido.getId());
     }
-    //AQUI FALTAN EL DE LEER TODOS
+    @Test
+    void givenItemsPedidos_WhenBuscarAll_thenReturnsAllItemsPedidos(){
+        ItemPedidoDTO itemPedidoDTO = new ItemPedidoDTO(
+                itemPedido.getId(),
+                pedidoDTO,
+                productDTO,
+                itemPedido.getCantidad(),
+                itemPedido.getPrecioUnitario());
+        ItemPedidoDTO itemPedidoDTO2 = new ItemPedidoDTO(
+                itemPedido2.getId(),
+                pedidoDTO,
+                productDTO2,
+                itemPedido2.getCantidad(),
+                itemPedido2.getPrecioUnitario());
+        given(itemPedidoRepository.findAll()).willReturn(List.of(itemPedido,itemPedido2));
+        given(itemPedidoMapper.EntityToDto(any())).willReturn(itemPedidoDTO,itemPedidoDTO2);
+        List<ItemPedidoDTO> itemsPedidos = itemPedidoService.obtenerTodosLosItemPedidos();
+        assertThat(itemsPedidos).isNotEmpty();
+        assertThat(itemsPedidos.get(0)).isEqualTo(itemPedidoDTO);
+        assertThat(itemsPedidos.get(1)).isEqualTo(itemPedidoDTO2);
+    }
     @Test
     void givenItemPedido_whenEliminar_thenNothing(){
         given(itemPedidoRepository.findById(itemPedido.getId())).willReturn(Optional.of(itemPedido));
         willDoNothing().given(itemPedidoRepository).delete(any());
         itemPedidoService.removerItemPedido(itemPedido.getId());
         verify(itemPedidoRepository,times(1)).delete(any());
+    }
+    @Test
+    void givenItemsPedidos_whenFindByPedidoId_thenReturnsItemsPedidos(){
+        ItemPedidoDTO itemPedidoDTO = new ItemPedidoDTO(
+                itemPedido.getId(),
+                pedidoDTO,
+                productDTO,
+                itemPedido.getCantidad(),
+                itemPedido.getPrecioUnitario());
+        ItemPedidoDTO itemPedidoDTO2 = new ItemPedidoDTO(
+                itemPedido2.getId(),
+                pedidoDTO,
+                productDTO2,
+                itemPedido2.getCantidad(),
+                itemPedido2.getPrecioUnitario());
+        given(itemPedidoRepository.findByPedidoId(pedido.getId())).willReturn(List.of(itemPedido,itemPedido2));
+        given(itemPedidoMapper.EntityToDto(any())).willReturn(itemPedidoDTO,itemPedidoDTO2);
+        List<ItemPedidoDTO> itemsPedidos = itemPedidoService.buscarItemPedidosByPedidoId(pedido.getId());
+        assertThat(itemsPedidos).isNotEmpty();
+        assertThat(itemsPedidos).size().isEqualTo(2);
+        assertThat(itemsPedidos.get(0).id()).isEqualTo(itemPedido.getId());
+        assertThat(itemsPedidos.get(1).id()).isEqualTo(itemPedido2.getId());
+    }
+    @Test
+    void givenItemsPedidos_whenBuscarByProductoId_thenReturnsItemPedido(){
+        ItemPedidoDTO itemPedidoDTO = new ItemPedidoDTO(
+                itemPedido.getId(),
+                pedidoDTO,
+                productDTO,
+                itemPedido.getCantidad(),
+                itemPedido.getPrecioUnitario());
+        given(itemPedidoRepository.findByProductoId(product.getId())).willReturn(List.of(itemPedido));
+        given(itemPedidoMapper.EntityToDto(any())).willReturn(itemPedidoDTO);
+        List<ItemPedidoDTO> itemsPedidos = itemPedidoService.buscarItemPedidosByProductoId(product.getId());
+        assertThat(itemsPedidos).isNotEmpty();
+        assertThat(itemsPedidos).size().isEqualTo(1);
+        assertThat(itemsPedidos.get(0).id()).isEqualTo(itemPedido.getId());
+    }
+    @Test
+    void givenItemsPedidos_whenBuscarByProductoId_thenReturnsTotalVentas(){
+        ItemPedidoDTO itemPedidoDTO = new ItemPedidoDTO(
+                itemPedido.getId(),
+                pedidoDTO,
+                productDTO,
+                itemPedido.getCantidad(),
+                itemPedido.getPrecioUnitario());
+        given(itemPedidoRepository.findTotalVentasByProducto(product.getId())).willReturn((float) 5000);
+        Float totalVentas = itemPedidoService.buscarTotalVentasByProductoId(product.getId());
+        assertThat(totalVentas).isNotNull();
+        assertThat(totalVentas).isEqualTo(5000);
     }
 }
